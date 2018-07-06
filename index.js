@@ -1,7 +1,3 @@
-const AddressPopup = {
-  template: '#template-address-popup'
-}
-
 const app_address = new Vue({
   el: '#root',
   data() {
@@ -48,17 +44,9 @@ const app_address = new Vue({
     update_scroller() {
       if (!this.scroller_province) return
 
-      this.scroller_province.$update()
-      let index = this.province_list.indexOf(this.selected_province)
-      this.scroller_province.scrollTo(null, index * this.item_height, true)
-
-      this.scroller_city.$update()
-      index = this.selected_province[2].indexOf(this.selected_city)
-      this.scroller_city.scrollTo(null, index * this.item_height, true)
-
-      this.scroller_county.$update()
-      index = this.selected_city[2].indexOf(this.selected_county)
-      this.scroller_county.scrollTo(null, index * this.item_height, true)
+      this.scroller_province.$update(this.province_list.indexOf(this.selected_province))
+      this.scroller_city.$update(this.selected_province[2].indexOf(this.selected_city))
+      this.scroller_county.$update(this.selected_city[2].indexOf(this.selected_county))
     },
     is_code_in_list(code, list) {
       for (let i = 0, len = list.length; i < len; i++) {
@@ -74,22 +62,13 @@ const app_address = new Vue({
       return null
     },
     onProvinceChange(i) {
-      const province = this.province_list[i]
-      if (province === this.selected_province) return
-      this.selected_province = province
-      this.update_data()
+      this.set_selected_item(i, this.province_list, 'selected_province')
     },
     onCityChange(i) {
-      const city = this.selected_province[2][i]
-      if (city === this.selected_city) return
-      this.selected_city = city
-      this.update_data()
+      this.set_selected_item(i, this.selected_province[2], 'selected_city')
     },
     onCountyChange(i) {
-      const county = this.selected_city[2][i]
-      if (county === this.selected_county) return
-      this.selected_county = county
-      this.update_data()
+      this.set_selected_item(i, this.selected_city[2], 'selected_county')
     },
     set_data(province, city, county) {
       province = this.get_item_match(province, this.province_list)
@@ -102,11 +81,23 @@ const app_address = new Vue({
       if (county) this.selected_county = county
 
       this.$nextTick(() => this.update_data())
+    },
+    set_selected_item(index, list, key_selected) {
+      let item = list[index]
+      // 尽量匹配到选中项
+      if (!item) {
+        if (index < 0) item = list[0]
+        else if (index >= list.length) item = list[list.length - 1]
+      }
+      if (item === this[key_selected]) return
+      this[key_selected] = item
+      this.update_data()
     }
   }
 })
 
 function initScroller(container, content, onchange) {
+  const ITEM_HEIGHT = 34 // 项目高度 34px
   const rect = container.getBoundingClientRect()
   const scroller = new Scroller(render(content), {
     scrollingX: false,
@@ -118,8 +109,11 @@ function initScroller(container, content, onchange) {
   scroller.setDimensions(container.clientWidth, container.clientHeight, content.offsetWidth, content.offsetHeight)
 
   // 新增方法
-  scroller.$update = () => {
+
+  scroller.$update = (itemIndex) => {
     scroller.setDimensions(container.clientWidth, container.clientHeight, content.offsetWidth, content.offsetHeight)
+    // 更新位置，确保数据更新后位置同步，使用 Scroller 私有方法直接移动到位，避免再次触发动画效果
+    setTimeout(() => scroller.__publish(0, itemIndex * ITEM_HEIGHT, 1))
   }
   scroller.$destroy = () => {
     scroller.__callback = null // 移除 render 回调引用
@@ -146,8 +140,8 @@ function initScroller(container, content, onchange) {
   }
 
   function onScrollingComplete() {
-    // 异步处理更精准写，滚动完成后可能还没有到位
-    setTimeout(() => onchange( Math.floor(scroller.__scrollTop / 34)))
+    // 异步处理更精准些，滚动完成后可能还没有到位
+    setTimeout(() => onchange( Math.floor(scroller.__scrollTop / ITEM_HEIGHT) ))
   }
 
   return scroller
