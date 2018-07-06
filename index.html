@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>vue-address-component</title>
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div id="root">
+    <div class="demo-address" @click="onClickAddress">{{ selected_province[1] }} {{ selected_city[1] }} {{ selected_county[1] }}</div>
+    <div v-show="popup_visible" class="address-popup">
+      <div class="address-popup__mask" @click="popup_visible = false"></div>
+      <div class="address-popup__content">
+        <div class="address-popup__head">
+          <div class="address-popup__head-left">取消</div>
+          <div class="address-popup__head-title"></div>
+          <div class="address-popup__head-right" @click="popup_visible = false">确定</div>
+        </div>
+        <div class="address-popup__body">
+        <div class="address-popup__column" ref="province_container" id="columen-province">
+          <div class="address-popup__column-content" ref="province_content" id="columen-province-content">
+            <div v-for="item in province_list" class="address-popup__column-item">{{ item[1] }}</div>
+          </div>
+          <div class="address-popup__column-mask"></div>
+          <div class="address-popup__column-indicator"></div>
+        </div>
+        <div class="address-popup__column" ref="city_container">
+          <div class="address-popup__column-content" ref="city_content">
+            <div v-for="item in selected_province[2]" class="address-popup__column-item">{{ item[1] }}</div>
+          </div>
+          <div class="address-popup__column-mask"></div>
+          <div class="address-popup__column-indicator"></div>
+        </div>
+        <div class="address-popup__column" ref="county_container">
+          <div class="address-popup__column-content" ref="county_content">
+              <div v-for="item in selected_city[2]" class="address-popup__column-item">{{ item[1] }}</div>
+          </div>
+          <div class="address-popup__column-mask"></div>
+          <div class="address-popup__column-indicator"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="lib/Animate.js"></script>
+  <script src="lib/Scroller.js"></script>
+  <script src="lib/render.js"></script>
+  <script src="lib/vue.min.js"></script>
+  <script src="data/data_201805.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>
