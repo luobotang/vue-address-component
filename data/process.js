@@ -51,6 +51,14 @@ text.split(/\r\n/).forEach((line) => {
   county_list.push([code, name])
 })
 
+// 处理没有下级县区数据的地市
+
+province_list.forEach((p) => p[2].forEach(([code, name, county_list]) => {
+  if (county_list.length === 0) {
+    county_list.push([code, name]) // 补充一条地市数据
+  }
+}))
+
 fs.writeFileSync('data_201805.js', 'var data_201805 = ' + renderData(province_list), {encoding: 'utf-8'})
 
 function renderData(province_list) {
