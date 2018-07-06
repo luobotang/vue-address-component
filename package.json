@@ -1,0 +1,23 @@
+{
+  "name": "vue-address-component",
+  "version": "0.1.0",
+  "description": "仿 Vux 地址弹窗组件，基于 github.com/zynga/scroller 实现",
+  "main": "src/AddressPopup.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luobotang/vue-address-component.git"
+  },
+  "keywords": [
+    "address",
+    "popup"
+  ],
+  "author": "luobotang",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/luobotang/vue-address-component/issues"
+  },
+  "homepage": "https://github.com/luobotang/vue-address-component#readme"
+}
