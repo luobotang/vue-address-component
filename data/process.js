@@ -48,10 +48,21 @@ text.split(/\r\n/).forEach((line) => {
     return
   }
 
+  const curr_city = city_list[city_list.length - 1]
+  const curr_city_code = curr_city && curr_city[0]
+  // 去除直辖市情况
+  if (!(curr_city_code in sp_codes)) {
+    // 特殊处理：没有上级地市的县区（省直辖县）
+    if (!curr_city || !curr_city_code.endsWith('00') || curr_city_code.substr(0, 4) !== code.substr(0, 4)) {
+      city_list.push([code, name, [[code, name]]])
+      return
+    }
+  }
+
   county_list.push([code, name])
 })
 
-// 处理没有下级县区数据的地市
+// 特殊处理：没有下级县区数据的地市（直筒子市）
 
 province_list.forEach((p) => p[2].forEach(([code, name, county_list]) => {
   if (county_list.length === 0) {
