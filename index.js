@@ -146,8 +146,8 @@ function initScroller(container, content, onchange) {
   }
 
   function onScrollingComplete() {
-    const index = Math.floor(scroller.__scrollTop / 34)
-    setTimeout(() => onchange(index)) // 这里同步执行有点卡，异步处理
+    // 异步处理更精准写，滚动完成后可能还没有到位
+    setTimeout(() => onchange( Math.floor(scroller.__scrollTop / 34)))
   }
 
   return scroller
